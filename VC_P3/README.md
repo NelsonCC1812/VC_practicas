@@ -22,3 +22,19 @@ Hecho esto, se ha probado con otras fotos, dando un resultado incluso mejor del 
     * Si no es un punto valido (dentro de un contorno), volverá a aparecer la imagen
     * Si es un punto válido desaparecerá la imagen y continuará el proceso.
 3. Se mostrará el resultado de la suma de los valores de las monedas.
+
+#### Demostración
+
+Esta es la imagen que saque yo (y su versión en escala de grises):  
+![Imagen de monedas](./readme/monedas.png)![Imagen en escala de grises](./readme/monedas_gris.png)  
+Como puede verse no es la mejor de las imágenes, y más adelante veremos que no se detectan bien los contornos.  
+
+Ahora sacamos el histograma, aunque en este caso hemos usado **OTSU**, esta bien saber como es el histograma de la imagen:  
+![Histograma](./readme/monedas_histograma.png) 
+
+Ahora calculamos la versión umbralizada de la imagen, en este caso usando **OTSU** que calcula de forma automática el umbral:  
+![Imagen umbralizada](./readme/monedas_umbralizada.png)  
+Como vemos, no detecta bien los bordes de la imagen, se vera aún mejor en la siguiente imagen. Una vez calculado el umbral, calculamos los contornos exteriores, dibujando dichos contornos a la imagen original, tenemos lo siguiente:  
+![Imagen con los contornos detectados](./readme/monedas_contornos.png)  
+
+Pese a no detectar los contornos de forma perfecta, tenemos que el resultado del valor total de las monedas ha sido correco, presumiblemente debido a la correcta elección del GAP y a que la imagen no ha sido tan mala. (Teniendo por supuesto en cuenta que no existen monedas superpuestas, y otros detalles y/o imperfecciones en las monedas o en la imagen).
