@@ -1,5 +1,17 @@
 # Práctica 4
 
+## Tabla de contenidos
+
+- [Práctica 4](#práctica-4)
+  - [Tabla de contenidos](#tabla-de-contenidos)
+  - [Contador de monedas](#contador-de-monedas)
+    - [Introducción](#introducción)
+      - [Desarrollo](#desarrollo)
+      - [Uso del contador](#uso-del-contador)
+      - [Demostración](#demostración)
+  - [Clasificador de microplásticos](#clasificador-de-microplásticos)
+
+
 ## Contador de monedas
 
 ### Introducción
@@ -37,4 +49,7 @@ Ahora calculamos la versión umbralizada de la imagen, en este caso usando **OTS
 Como vemos, no detecta bien los bordes de la imagen, se vera aún mejor en la siguiente imagen. Una vez calculado el umbral, calculamos los contornos exteriores, dibujando dichos contornos a la imagen original, tenemos lo siguiente:  
 ![Imagen con los contornos detectados](./readme/monedas_contornos.png)  
 
-Pese a no detectar los contornos de forma perfecta, tenemos que el resultado del valor total de las monedas ha sido correco, presumiblemente debido a la correcta elección del GAP y a que la imagen no ha sido tan mala. (Teniendo por supuesto en cuenta que no existen monedas superpuestas, y otros detalles y/o imperfecciones en las monedas o en la imagen).
+Pese a no detectar los contornos de forma perfecta, tenemos que el resultado del valor total de las monedas ha sido correcto, presumiblemente debido a la correcta elección del GAP y a que la imagen no ha sido tan mala. (Teniendo por supuesto en cuenta que no existen monedas superpuestas, y otros detalles y/o imperfecciones en las monedas o en la imagen).
+
+## Clasificador de microplásticos
+
