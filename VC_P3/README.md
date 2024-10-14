@@ -1,8 +1,11 @@
-# Práctica 4
+# Práctica 3
+
+> ## Prácticas de la asignatura <u>Visión por Computador</u>
+> **Alumno:** ***Nelson Cabrera Cano***
 
 ## Tabla de contenidos
 
-- [Práctica 4](#práctica-4)
+- [Práctica 3](#práctica-3)
   - [Tabla de contenidos](#tabla-de-contenidos)
   - [Contador de monedas](#contador-de-monedas)
     - [Introducción](#introducción)
