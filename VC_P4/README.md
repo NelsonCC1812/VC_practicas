@@ -11,6 +11,7 @@
 			- [Entrenar el modelo](#entrenar-el-modelo)
 			- [Usar el modelo](#usar-el-modelo)
 		- [Leer la matrícula](#leer-la-matrícula)
+		- [Privacidad (extra)](#privacidad-extra)
 		- [Recopilar los datos](#recopilar-los-datos)
 
 
@@ -33,7 +34,11 @@ Queremos que nos aparezca en la imagen original una caja que encierre a dicha in
 
 #### Entrenar el modelo
 
-Como YOLO de serie no detecta matrículas, necesitamos entrenarlo para que sea capaz de detectarlas. En este caso buscaremos un dataset ya existente, en este caso hemos usado este [dataset](https://universe.roboflow.com/zalfon/platerecsystem-jk0bw/dataset/2).
+Como YOLO de serie no detecta matrículas, necesitamos entrenarlo para que sea capaz de detectarlas. En este caso buscaremos un dataset ya existente, en este caso hemos usado este [dataset](https://universe.roboflow.com/zalfon/platerecsystem-jk0bw/dataset/2). Aquí tenemos un ejemplo de las imágenes que podemos encontrar en el dataset:
+
+![Ejemplo del dataset](./example-image.jpg)
+
+Como podemos ver es una imagen donde se ve una matrícula europea, el dataset tiene una buena calidad de imágenes para nuestro cometido.
 
 > Por temas del environment que estamos usando, hemos tenido que modificar el archivo de configuración (data.yaml) del dataset, y hemos tenido que poner rutas absolutas a los directorios de las imágenes.
 
@@ -53,6 +58,10 @@ Tras el proceso de entrenamiento, vamos al último entrenamiento que hayamos hec
 En nuestro caso tenemos estos resultados:
 ![Resultados del entrenamiento](train-results.png)
 
+Como podemos ver tenemos unos muy buenos resultados de entrenamiento, en algunas métricas podemos ver que podríamos haber hecho *Early Stopping* antes para ahorrarnos algunas épocas.
+
+También podemos ver el **learning rate** adaptativo, ya que se pueden observar claros saltos en las métricas el principio, y como los saltos son menos pronunciados conforme el entrenamiento avanza.
+
 > Además, probando las salidas con el video con el que vamos a trabajar, tenemos resultados muy satisfactorios.
 
 #### Usar el modelo
@@ -70,13 +79,18 @@ Usaremos el método **recognize**, pasándole la imagen. Aprovecharemos también
 
 > Es importante tener en cuenta que no siempre estará disponible la matrícula completa, asi que muchas veces veremos trozos de esta.  
 > Debido a la calidad de imagen y al movimiento, muchas veces no detectará bien lo que esta escrito en la matrícula.
+>
+
+### Privacidad (extra)
+
+Hemos hecho el extra de la privacidad, para lo cual, hemos sacado los pixeles correspondientes tanto a las matrículas como al tercio superior de las personas y les hemos aplicado **blur**, tras esto, hemos sobreescrito los pixeles tratados en la imagen original. Teniendo así tanto las personas como las matrículas con su privacidad preservada, eso si, mientras se mantienen detectadas.
 
 ### Recopilar los datos
 
 Por último, recopilaremos los datos.En este caso, buscamos:
 * Un video con todos los objetos detectados, con sus IDs.
 	* [Video original](https://alumnosulpgc-my.sharepoint.com/:v:/g/personal/nelson_cabrera101_alu_ulpgc_es/ESugWDjtxJVJj-IE5pvwQGUBh12bk5dA7FzRHa7IkBiZRQ?nav=eyJyZWZlcnJhbEluZm8iOnsicmVmZXJyYWxBcHAiOiJPbmVEcml2ZUZvckJ1c2luZXNzIiwicmVmZXJyYWxBcHBQbGF0Zm9ybSI6IldlYiIsInJlZmVycmFsTW9kZSI6InZpZXciLCJyZWZlcnJhbFZpZXciOiJNeUZpbGVzTGlua0NvcHkifX0&e=gaLV6M)
-	* [Video output](https://alumnosulpgc-my.sharepoint.com/:v:/g/personal/nelson_cabrera101_alu_ulpgc_es/ETFxHC_JQbxDqKsyuoBFqZwBB7QXcdvLmFj20OEtrOo1jQ?nav=eyJyZWZlcnJhbEluZm8iOnsicmVmZXJyYWxBcHAiOiJPbmVEcml2ZUZvckJ1c2luZXNzIiwicmVmZXJyYWxBcHBQbGF0Zm9ybSI6IldlYiIsInJlZmVycmFsTW9kZSI6InZpZXciLCJyZWZlcnJhbFZpZXciOiJNeUZpbGVzTGlua0NvcHkifX0&e=486hDl<>)
+	* [Video output](https://alumnosulpgc-my.sharepoint.com/:v:/g/personal/nelson_cabrera101_alu_ulpgc_es/EeYZT8x2BCVCmDmIxfr-2FoBKpqGINXe5CGT0cxCR4xcEg?e=YJ4eyQ](https://alumnosulpgc-my.sharepoint.com/:v:/g/personal/nelson_cabrera101_alu_ulpgc_es/EeYZT8x2BCVCmDmIxfr-2FoBKpqGINXe5CGT0cxCR4xcEg?e=ozXRyJ))
 * Un CSV con los datos obtenidos, usaremos el siguiente formato:
 ```csv
 fotograma,tipo_objeto,confianza,identificador_tracking,x1,y1,x2,y2,matrícula_en_su_caso,confianza_matricula,mx1,my1,mx2,my2,texto_matricula
