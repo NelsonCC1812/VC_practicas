@@ -55,7 +55,9 @@ Como utilizamos un Mac para hacer los cortes, el archivo salió en formato **MOV
 
 Este es el video que utilizamos como input:
 
-[Video input](./input.mp4)
+<video  controls>
+  <source src="./input.mp4" type="video/mp4">
+</video>
 
 
 ### Variables de control
@@ -129,7 +131,9 @@ Utilizamos un contador para poder ver el progreso de la creación del video de s
 
 Tras todo este proceso tenemos como resultado este video:
 
-[Video output](./output.mp4)
+<video  controls>
+  <source src="./output.mp4" type="video/mp4">
+</video>
 
 Cuando la cara se ve claramente, se tiene un muy buen resultado. Es si, en cabezas que no estén totalmente verticales y en aquellas personas que agachan la cabeza, podemos ver las costuras del sistema que estamos utilizando.
 
