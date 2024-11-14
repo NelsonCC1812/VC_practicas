@@ -53,11 +53,7 @@ Debido a la potencia que necesita el detector, y a que no disponemos de mucha po
 
 Como utilizamos un Mac para hacer los cortes, el archivo salió en formato **MOV**, y este formato daba muchos problemas al pasarlos por el programa (el programa dejaba de funcionar). Por lo que optamos por usar una herramienta online para convertir el video de formato **MOV** a formato **MP4**, el cual si funciono de la forma correcta.
 
-Este es el video que utilizamos como input:
-
-<video  controls>
-  <source src="./input.mp4" type="video/mp4">
-</video>
+Este es el [video](https://alumnosulpgc-my.sharepoint.com/:v:/g/personal/nelson_cabrera101_alu_ulpgc_es/ES4sZmMdk5BGnLw-qhZGvZkBeaNeU3sES_Stfqw76xodIA?nav=eyJyZWZlcnJhbEluZm8iOnsicmVmZXJyYWxBcHAiOiJPbmVEcml2ZUZvckJ1c2luZXNzIiwicmVmZXJyYWxBcHBQbGF0Zm9ybSI6IldlYiIsInJlZmVycmFsTW9kZSI6InZpZXciLCJyZWZlcnJhbFZpZXciOiJNeUZpbGVzTGlua0NvcHkifX0&e=XdERhZ) que utilizamos como input.
 
 
 ### Variables de control
@@ -129,11 +125,7 @@ Utilizamos un contador para poder ver el progreso de la creación del video de s
 
 ## Resultados
 
-Tras todo este proceso tenemos como resultado este video:
-
-<video  controls>
-  <source src="./output.mp4" type="video/mp4">
-</video>
+Tras todo este proceso tenemos como resultado este [video](https://alumnosulpgc-my.sharepoint.com/:v:/g/personal/nelson_cabrera101_alu_ulpgc_es/EWK5TFsBQ4ZKmlgQ9ojqrMwBSqeWyIkIpPCQ0wizpgJMhQ?nav=eyJyZWZlcnJhbEluZm8iOnsicmVmZXJyYWxBcHAiOiJPbmVEcml2ZUZvckJ1c2luZXNzIiwicmVmZXJyYWxBcHBQbGF0Zm9ybSI6IldlYiIsInJlZmVycmFsTW9kZSI6InZpZXciLCJyZWZlcnJhbFZpZXciOiJNeUZpbGVzTGlua0NvcHkifX0&e=hEhaXq)
 
 Cuando la cara se ve claramente, se tiene un muy buen resultado. Es si, en cabezas que no estén totalmente verticales y en aquellas personas que agachan la cabeza, podemos ver las costuras del sistema que estamos utilizando.
 
