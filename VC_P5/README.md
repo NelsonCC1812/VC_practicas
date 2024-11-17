@@ -129,6 +129,9 @@ Tras todo este proceso tenemos como resultado este [video](https://alumnosulpgc-
 
 Cuando la cara se ve claramente, se tiene un muy buen resultado. Es si, en cabezas que no estén totalmente verticales y en aquellas personas que agachan la cabeza, podemos ver las costuras del sistema que estamos utilizando.
 
+Aquí otro ejemplo:  
+![Ejemplo](./output-gif.gif)
+
 
 ## Notas
 
