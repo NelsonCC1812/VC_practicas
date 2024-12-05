@@ -14,3 +14,6 @@ Usaremos como entrenamiento el método **tripplet loss**
 
 [Dataset link](https://www.kaggle.com/datasets/tapakah68/selfies-id-images-dataset)
 
+## Face detector
+
+[Face detector posibilities (mediapipe)][https://ai.google.dev/edge/mediapipe/solutions/vision/face_detector?hl=es-419]
