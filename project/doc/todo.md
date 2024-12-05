@@ -3,9 +3,9 @@
 ## Train prev
 - [x] Extraer dataset
   - [x] Generar datasets
-- [ ] Generar imagenes de las caras
-  - [ ] Pasarle el face detection al dataset
-  - [ ] Guardar las subimagenes correspondientes a cada una de las caras
+- [x] Generar imagenes de las caras
+  - [x] Pasarle el face detection al dataset
+  - [x] Guardar las subimagenes correspondientes a cada una de las caras
 - [ ] Generar las entradas al model
   - [ ] Aplicar normalizacion a las subimagenes
   - [ ] Guardar las subimagenes de las caras tras la normalizacion
@@ -79,6 +79,7 @@ DROPOUTS = [.5, .75]
 
 * data_procesing.ipynb
 * face_extractor.ipynb
+* face_normalization.ipynb
 * train_prevs.ipynb
 * model_generation.ipynb
 * model.py
