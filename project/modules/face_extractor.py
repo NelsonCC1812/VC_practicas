@@ -5,9 +5,10 @@ from mediapipe.tasks.python import vision
 
 class FaceExtractor:
     MODEL_PATH = '../blaze_face_short_range.tflite'
-    def __init__(self):
+    def __init__(self,*, mode):
          self.detector = vision.FaceDetector.create_from_options(
     vision.FaceDetectorOptions(base_options=python.BaseOptions(model_asset_path=self.MODEL_PATH)))
+         self.mode = mode
            
 
     def extract_bounding_boxes(self, results):
@@ -33,4 +34,4 @@ class FaceExtractor:
     def adapt_image(self, img, *, gray=False): 
         return mp.Image(image_format=(mp.ImageFormat.GRAY8 if gray else mp.ImageFormat.SRGB), data=img)
    
-    def __call__(self, img): return self.extract_bounding_boxes(self.detector.detect(self.adapt_image(img)).detections)
+    def __call__(self, img): return self.extract_bounding_boxes(self.detector.detect( img if self.mode == 'mp' else self.adapt_image(img)).detections)
