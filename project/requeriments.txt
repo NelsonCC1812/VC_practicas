@@ -5,3 +5,5 @@ pandas
 mediapipe
 numpy
 scikit-learn
+torch
+torchvision

@@ -1,10 +1,10 @@
-# para normalizar
-normalizer()
+from torchvision.io import read_image, ImageReadMode
+from torchvision import transforms
 
-# para aplicar 1 todos los filtros (lo mismo que normalizar)
-normalizer.apply(img, filter=normalizer.filters.all)
-
-# para aplicar 1 concreto
-normalizer.apply(img, filter=normalizer.filters.filter_name)
-
-con propiedad normalization[] con la lista ordenada de los filtros que se aplicaran ordenados
+normalize = lambda image_size:  transforms.Compose([
+    transforms.ToPILImage(),
+    transforms.Grayscale(num_output_channels=1),
+    transforms.Resize((image_size, image_size), antialias=True),
+    transforms.functional.equalize(),
+    transforms.ToTensor()
+])
