@@ -83,3 +83,5 @@ DROPOUTS = [.5, .75]
 * train_prevs.ipynb
 * model_generation.ipynb
 * model.py
+
+# fijarse como se hace realmente data augmentation en python
