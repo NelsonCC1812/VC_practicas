@@ -5,9 +5,10 @@ import torch.nn.functional as F
 DROPOUT_1 = .5
 DROPOUT_2 = .5
 
-class CNN(nn.Module):
+class Model(nn.Module):
     def __init__(self):
-        super(CNN, self).__init__()
+        super(Model, self).__init__()
+        
         padding_size = 3
 
         # Convolutional layers

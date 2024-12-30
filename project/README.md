@@ -17,3 +17,7 @@ Usaremos como entrenamiento el método **tripplet loss**
 ## Face detector
 
 [Face detector posibilities (mediapipe)][https://ai.google.dev/edge/mediapipe/solutions/vision/face_detector?hl=es-419]
+
+
+
+por defecto, `torch.nn.TripletMarginLoss` utiliza `nn.PairwiseDistance` que es la función que nosotros utilizaremos mas adelante para calcular la distancia por nuestra cuenta.

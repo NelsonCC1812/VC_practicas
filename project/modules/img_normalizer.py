@@ -8,7 +8,7 @@ import sys; sys.path.append('../')
 from commons.imageutils import *
 
 
-# facemesh = mp.solutions.face_mesh.FaceMesh(static_image_mode=True, max_num_faces=1, min_detection_confidence=0.5)
+# _facemesh = mp.solutions.face_mesh.FaceMesh(static_image_mode=True, max_num_faces=1, min_detection_confidence=0.5)
 
 
 # def face_aligner(img):
@@ -16,7 +16,7 @@ from commons.imageutils import *
 #     img = tensor2numpy(img)
 #     plt.imshow(img)
     
-#     res = facemesh.process(img)
+#     res = _facemesh.process(img)
 
 #     if res.multi_face_landmarks:
 #         for facelm in res.multi_face_landmarks:
