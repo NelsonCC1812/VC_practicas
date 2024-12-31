@@ -1,100 +1,123 @@
 import torch
 from tqdm import tqdm
 
+# ---
+import sys; sys.path.append('../')
+from commons.HistCollection import *
+
+
+
 def eval(model, loader, *, device, criterion, dst):
     """returns loss, posit_dst_h, negat_dst_h, asetid_h, nsetid_h
-    could extract posit&negats mean, std, median, diferences
+    could extract posit&negats mean, std, median, diferences...
     """
     if not (device and criterion and dst): raise Exception("Params needed")
 
-    model.eval()
-
-    posit_dst_h = [] # distance of the anchor relative to positive
-    negat_dst_h = [] # distance of the anchor relative to negative
-
-    asetid_h = [] # setsids of the anchors
-    nsetid_h = [] # setsids of the negatives
+    eval_h = HistCollection()
 
     loss = 0.0
     total = 0
 
+    model.eval()
+
     with torch.no_grad():
-        for anchs, posits, negats, asetid, nsetid  in loader:
+        for anchs, posits, negats, asetids, nsetids  in loader:
             
             anchs, posits, negats = anchs.to(device), posits.to(device), negats.to(device)
             anchs, posits, negats = model(anchs), model(posits), model(negats)
 
             loss += criterion(anchs, posits, negats).item()
-            total += len(asetid)
+            total += len(asetids)
 
-            posit_dst_h.extend([dst(anchs[i], posits[i]) for i in range(len(anchs))])
-            negat_dst_h.extend([dst(anchs[i], negats[i]) for i in range(len(anchs))])
+            eval_h.posit_dst.extend([dst(anchs[i], posits[i]) for i in range(len(anchs))])
+            eval_h.negat_dst.extend([dst(anchs[i], negats[i]) for i in range(len(anchs))])
 
-            asetid_h.extend(asetid)
-            nsetid_h.extend(nsetid)
+            eval_h.asetid.extend(asetids)
+            eval_h.nsetid.extend(nsetids)
 
+
+    eval_h.loss = [loss/len(loader)]
     
-    return  loss/len(loader), posit_dst_h, negat_dst_h, asetid_h, nsetid_h
+    return  eval_h
 
 
 
 def train_loop(model, loader, *, optimizer, criterion, dst, num_epoch=100, 
                device=torch.device("cuda" if torch.cuda.is_available() else "cpu"),
-               train_loss_h=[], val_loss_h=[],
-               callback=lambda **_: None, early_stopper, scheduler, val_loader):
+               early_stopper, scheduler, callback=lambda **_: None,
+               train_h = HistCollection(), val_h = HistCollection(), val_loader): 
     
     if not (optimizer and criterion and dst and early_stopper and scheduler): raise Exception("Params needed")
-    
-    val_preds, val_labels, val_loss, val_acc  = eval(model, val_loader, device=device, criterion=criterion)
-    callback(epoch=0, val_acc=val_acc, val_loss=val_loss, train_loss=float("inf"), train_acc=0)
 
-    for epoch in range(num_epoch):
+
+    for epoch in range(1,num_epoch+1):
 
         running_loss = 0.0
         total = 0
 
+        running_posit_dst_h = []
+        running_negat_dst_h = []
+
+        running_asetid_h = []
+        running_nsetid_h = []
+
         model.train()
 
-        for imgs, labels in tqdm(loader):
+        for anchs, posits, negats, asetids, nsetids in tqdm(loader):
 
-            imgs, labels = imgs.to(device), labels.to(device)
+            anchs, posits, negats = anchs.to(device), posits.to(device), negats.to(device)
             optimizer.zero_grad()
 
-            outs = model(imgs)
-            loss = criterion(outs, labels)
-            
-            running_loss += loss.item()
+            anchs, posits, negats = model(anchs), model(posits), model(negats)
+            loss = criterion(anchs, posits, negats)
             
             loss.backward()
             optimizer.step()
 
-            # extra for analytics
-            _, predicted = torch.max(outs, 1)
-            total += labels.size(0)
-            corrects += (predicted == labels).sum().item()
-            # ==================
+            # analysis ---
 
-            if not i % 10:
-                print(f"\tEpoch {epoch+1}, Batch {i}: Loss: {running_loss*(len(loader)-i+1)/(10*len(loader)):.4f}")
-            
-        val_preds, val_labels, val_loss, val_acc  = eval(model, val_loader, device=device, criterion=criterion)
+            running_loss += loss.item()
+
+            running_posit_dst_h.extend([dst(anchs[i], posits[i]) for i in range(len(anchs))])
+            running_negat_dst_h.extend([dst(anchs[i], negats[i]) for i in range(len(anchs))])
+
+            running_asetid_h.extend(asetids)
+            running_nsetid_h.extend(nsetids)
+
+            total += asetids.size(0)
+
+
+        # eval
+        val_loss, val_posit_dst_h, val_negat_dst_h, val_asetid_h, val_nsetid_h  = eval(model, val_loader, device=device, criterion=criterion)
         scheduler.step(val_loss)
-        
-        # extra for analytics
+
+        # analysis ---
+
+            # train
         train_loss = running_loss/len(loader)
-        train_loss_h.append(train_loss)
-        train_acc = 100*corrects/total
-        train_acc_h.append(train_acc)
+        train_h.train.append(train_loss)
 
-        val_loss_h.append(val_loss)
-        val_acc_h.append(val_acc*100)
-        # ===================
+        train_h.posit_dst.append(running_posit_dst_h)
+        train_h.negat_dst.append(running_negat_dst_h)
 
-        callback(epoch=epoch+1, val_acc=val_acc, val_loss=val_loss, train_loss=train_loss, train_acc=train_acc)
+        train_h.asetid.append(running_asetid_h)
+        train_h.nsetid.append(running_nsetid_h)
+
+            # val
+        val_h.loss.append(val_loss)
+
+        val_h.posit_dst.append(val_posit_dst_h)
+        val_h.negat_dst.append(val_negat_dst_h)
+
+        val_h.asetid.append(val_asetid_h)
+        val_h.nsetid.append(val_nsetid_h)
+
+        # ---
+        callback(epoch=epoch, train_loss=train_loss, val_loss=val_loss, train_h=train_h, val_h=val_h)
 
         if(early_stopper(val_loss, model)): break
 
-    return train_acc_h, val_acc_h, train_loss_h, val_loss_h, val_preds, val_labels
+    return train_h, val_h
 
 
 
