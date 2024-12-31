@@ -35,7 +35,7 @@ class Model(nn.Module):
         self.dropout1 = nn.Dropout(DROPOUT_1)
         self.fc2 = nn.Linear(1024, 512)
         self.dropout2 = nn.Dropout(DROPOUT_2)
-        self.fc3 = nn.Linear(512, 4)
+        self.fc3 = nn.Linear(512, 128)
 
     def forward(self, x):
         

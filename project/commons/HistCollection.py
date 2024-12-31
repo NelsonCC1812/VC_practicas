@@ -1,7 +1,7 @@
-from collections import namedtuple
-
-_HistCollecion = namedtuple('_HistCollecion', 'loss posit_dst negat_dst asetid nsetid')
-
-class HistCollection(_HistCollecion):
+class HistCollection():
     def __init__(self, loss=[], posit_dst=[], negat_dst=[], asetid=[], nsetid=[]):
-        super().__init__(loss, posit_dst, negat_dst, asetid, nsetid)
+        self.loss = loss
+        self.posit_dst = posit_dst
+        self.negat_dst = negat_dst
+        self.asetid = asetid
+        self.nsetid = nsetid

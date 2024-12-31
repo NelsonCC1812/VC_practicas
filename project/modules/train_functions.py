@@ -84,11 +84,11 @@ def train_loop(model, loader, *, optimizer, criterion, dst, num_epoch=100,
             running_asetid_h.extend(asetids)
             running_nsetid_h.extend(nsetids)
 
-            total += asetids.size(0)
+            total += len(asetids)
 
 
         # eval
-        val_loss, val_posit_dst_h, val_negat_dst_h, val_asetid_h, val_nsetid_h  = eval(model, val_loader, device=device, criterion=criterion)
+        val_loss, val_posit_dst_h, val_negat_dst_h, val_asetid_h, val_nsetid_h  = eval(model, val_loader, device=device, criterion=criterion, dst=dst)
         scheduler.step(val_loss)
 
         # analysis ---
