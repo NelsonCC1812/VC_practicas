@@ -1,3 +1,4 @@
+ipykernel
 pandas
 matplotlib
 opencv-python
@@ -8,3 +9,4 @@ scikit-learn
 torch
 torchvision
 tqdm
+ipympl
