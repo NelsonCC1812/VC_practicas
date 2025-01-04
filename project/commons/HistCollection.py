@@ -7,3 +7,5 @@ class HistCollection():
         self.nsetid = nsetid or []
 
     def __iter__(self): return self.__dict__.values().__iter__()
+
+    def copy(self): return HistCollection(self.loss[::], self.posit_dst[::], self.negat_dst[::], self.asetid[::], self.nsetid[::])

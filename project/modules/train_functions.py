@@ -42,15 +42,15 @@ def eval(model, loader, *, device, criterion, dst):
 
 
 
-def train_loop(model, loader, *, optimizer, criterion, dst, num_epoch=100, 
+def train_loop(model, loader, *,  val_loader, optimizer, criterion, dst,  num_epoch=100, initial_epoch=0,
                device=torch.device("cuda" if torch.cuda.is_available() else "cpu"),
                early_stopper, scheduler, callback=lambda **_: None,
-               train_h = HistCollection(), val_h = HistCollection(), val_loader): 
+               train_h = HistCollection(), val_h = HistCollection()): 
     
     if not (optimizer and criterion and dst and early_stopper and scheduler): raise Exception("Params needed")
     
 
-    for epoch in range(1,num_epoch+1):
+    for epoch in range(1+initial_epoch,num_epoch+initial_epoch+1):
 
         running_loss = 0.0
         total = 0
@@ -116,7 +116,7 @@ def train_loop(model, loader, *, optimizer, criterion, dst, num_epoch=100,
         # ---
         callback(epoch=epoch, train_loss=train_loss, val_loss=val_loss, train_h=train_h, val_h=val_h)
 
-        if(early_stopper(val_loss, model)): break
+        if(early_stopper(val_loss, model, epoch=epoch)): break
 
     return train_h, val_h
 
