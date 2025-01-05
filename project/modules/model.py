@@ -31,9 +31,9 @@ class Model(nn.Module):
         self.bn6 = nn.BatchNorm2d(512)
 
         # Fully connected layers
-        self.fc1 = nn.Linear(512*3*3, 1024) 
+        self.fc1 = nn.Linear(512*3*3, 2048) 
         self.dropout1 = nn.Dropout(DROPOUT_1)
-        self.fc2 = nn.Linear(1024, 512)
+        self.fc2 = nn.Linear(2048, 512)
         self.dropout2 = nn.Dropout(DROPOUT_2)
         self.fc3 = nn.Linear(512, 128)
 
