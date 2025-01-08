@@ -9,4 +9,3 @@ scikit-learn
 torch
 torchvision
 tqdm
-ipympl
