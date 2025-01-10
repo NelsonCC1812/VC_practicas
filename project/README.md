@@ -19,6 +19,10 @@ por defecto, `torch.nn.TripletMarginLoss` utiliza `nn.PairwiseDistance` que es l
       - [Extración de las caras](#extración-de-las-caras)
     - [Procesamiento del dataset de las caras extraidas (link)](#procesamiento-del-dataset-de-las-caras-extraidas-link)
     - [Últimos preparativos antes del entrenamiento (link)](#últimos-preparativos-antes-del-entrenamiento-link)
+      - [Creamos un Dataset de **pytorch**](#creamos-un-dataset-de-pytorch)
+      - [Normalización con media y desviación típica](#normalización-con-media-y-desviación-típica)
+      - [Configuración](#configuración-1)
+    - [Entrenamiento (link)](#entrenamiento-link)
     - [Producto final](#producto-final)
   - [Conclusiones](#conclusiones)
 
@@ -110,7 +114,30 @@ Esta vez procesaremos de la misma manera que en el caso anterior, para balancear
 
 ### Últimos preparativos antes del entrenamiento ([link](procedures/train_prevs.ipynb))
 
-MARK
+Lo primero sera separar el dataset en **3** partes: entrenamiento, validation y tests. Aunque tradicionalmente se hacen en proporciones de 70, 20, 10 respectivamente, en este caso, al tener tan pocos elementos hemos  alterado dichas proporciones para que en el conjunto de test existan al menos 2 elementos de cada tipo.
+Comprobamos que lo hemos hecho bien y que no existen colisiones, entre los datasets. Una vez hecho este paso, guardamos cada uno de los datasets (que se resume en guardar un CSV de cada uno de ellos).
+
+#### Creamos un Dataset de **pytorch**
+
+El dataset de **pytorch** (extendiendo la clase Dataset de **pytorch**), necesitamos implementar 2 métodos y el constructor. Vamos a integrar un sistema de **data augmentation** integrado en el propio dataset (pudiendo aplicarle diferentes transformaciones de data augmentation al mismo dataset), y además, transformaciones que se aplicaran a todos los elementos (aquí aplicaremos la normalización).
+
+Necesitamos que el dataset nos devuelva tripletas, con un **ancla** (elemento aleatorio), **positivo** (elemento de la misma categoría que el **ancla**) y un **negativo** (elemento de una categoría diferente al **ancla**). Es importante que el ancla no sea la misma imagen que el positivo ni de la misma categoría que el negativo. 
+
+Aplicamos primero las transformaciones del **data augmentation** y después de la normalización.
+
+
+#### Normalización con media y desviación típica
+
+Se ha estudiado que la normalización de los datasets ayuda a que los modelos converjan más rápido y sean más precisos. Para hacer esto necesitamos, calcular la media y la desviación de todo el dataset, tras esto la guardamos para aplicarla en la normalización del dataset.
+
+#### Configuración
+
+En cuando al proceso podemos modificar el `DATASET_INPUT`, el `DATASET_OUTPUT`, el tamaño de la imagen que deberá concordar con lo que usaremos luego, el `batchsize` solo se utilizará para el calculo de la media y la desviación típica. Los porcentajes de los splits de los conjuntos de entrenamiento, validación y tests.
+
+### Entrenamiento ([link](procedures/model_training.ipynb))
+
+
+
 
 ### Producto final
 ## Conclusiones
