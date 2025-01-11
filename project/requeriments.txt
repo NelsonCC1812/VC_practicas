@@ -1,0 +1,11 @@
+ipykernel
+pandas
+matplotlib
+opencv-python
+pandas
+mediapipe
+numpy
+scikit-learn
+torch
+torchvision
+tqdm
