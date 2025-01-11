@@ -1,6 +1,3 @@
-por defecto, `torch.nn.TripletMarginLoss` utiliza `nn.PairwiseDistance` que es la función que nosotros utilizaremos mas adelante para calcular la distancia por nuestra cuenta.
-
-
 # Proyecto de Visión por computador
 
 ## Tabla de contenidos
@@ -16,8 +13,8 @@ por defecto, `torch.nn.TripletMarginLoss` utiliza `nn.PairwiseDistance` que es l
         - [Configuración](#configuración)
     - [Extractor de caras (link)](#extractor-de-caras-link)
       - [Elección del detector](#elección-del-detector)
-      - [Extración de las caras](#extración-de-las-caras)
-    - [Procesamiento del dataset de las caras extraidas (link)](#procesamiento-del-dataset-de-las-caras-extraidas-link)
+      - [Extracción de las caras](#extracción-de-las-caras)
+    - [Procesamiento del dataset de las caras extraídas (link)](#procesamiento-del-dataset-de-las-caras-extraídas-link)
     - [Últimos preparativos antes del entrenamiento (link)](#últimos-preparativos-antes-del-entrenamiento-link)
       - [Creamos un Dataset de **pytorch**](#creamos-un-dataset-de-pytorch)
       - [Normalización con media y desviación típica](#normalización-con-media-y-desviación-típica)
@@ -34,9 +31,9 @@ por defecto, `torch.nn.TripletMarginLoss` utiliza `nn.PairwiseDistance` que es l
         - [Criterion](#criterion)
         - [Optimizer](#optimizer)
         - [Scheduler](#scheduler)
-        - [Intentos de entrenamiento](#intentos-de-entrenamiento)
-        - [Primer entrenamiento](#primer-entrenamiento)
-        - [Segundo entrenamiento a partir del mejor modelo del primer entrenamiento](#segundo-entrenamiento-a-partir-del-mejor-modelo-del-primer-entrenamiento)
+      - [Intentos de entrenamiento](#intentos-de-entrenamiento)
+      - [Primer entrenamiento](#primer-entrenamiento)
+      - [Segundo entrenamiento a partir del mejor modelo del primer entrenamiento](#segundo-entrenamiento-a-partir-del-mejor-modelo-del-primer-entrenamiento)
     - [Producto final](#producto-final)
   - [Conclusiones](#conclusiones)
 
@@ -85,7 +82,7 @@ Para entrenar el modelo necesitamos un dataset que por cada una de las personas 
 
 Dependiendo del sistema operativo algunos nombres no se interpretan correctamente (ha sido probado en MacOs y Windows). Además no el **CSV** no enruta correctamente al directorio si tenemos en cuenta los directorios que te indican su origen. Para facilitarnos un poco el uso del dataset, muy a nuestro pesar, hemos de modificar un poco su estructura.
 
-* Hacemos que todas las caras esten correctamente orientadas.
+* Hacemos que todas las caras estén correctamente orientadas.
 * Renombramos los directorios que indican el origen, dejando solo el nombre de la "raza". Aprovechando así la columna del CSV que indica este dato, y completar la ruta.
 * Buscamos en el CSV los nombres que no se interpretan correctamente, y los modificamos. Hacemos lo mismo en los directorios con los identificadores de las personas, haciéndolos coincidir.
 
@@ -113,7 +110,7 @@ Como detector de caras, y por tanto, lo que usaremos para extraer la parte de la
 
 Una vez elegido el modelo, creamos el módulo **modules/face_extractor.py** que contendrá la clase encargada de gestionar la extracción de las caras.
 
-#### Extración de las caras
+#### Extracción de las caras
 
 Usando el modelo, extraemos todas las caras, guardamos las imágenes, y creando un dataframe con la ruta y el `setid`. Para guardarlo posteriormente como un **CSV** y poder usarlo después.
 
@@ -122,9 +119,9 @@ Usando el modelo, extraemos todas las caras, guardamos las imágenes, y creando 
 > * **cv2**: El proceso es más lento.
 
 
-### Procesamiento del dataset de las caras extraidas ([link](procedures/data_processing.ipynb))
+### Procesamiento del dataset de las caras extraídas ([link](procedures/data_processing.ipynb))
 
-Esta vez procesaremos de la misma manera que en el caso anterior, para balancear y analizar lo que tenemos. Es importante tener en cuenta que para que el proceso se aplique sobre el dataset de las caras extraidas, utilicemos el segundo par de datasets entrada/salida (`DATASET_ENV=1`).
+Esta vez procesaremos de la misma manera que en el caso anterior, para balancear y analizar lo que tenemos. Es importante tener en cuenta que para que el proceso se aplique sobre el dataset de las caras extraídas, utilicemos el segundo par de datasets entrada/salida (`DATASET_ENV=1`).
 
 ### Últimos preparativos antes del entrenamiento ([link](procedures/train_prevs.ipynb))
 
@@ -152,7 +149,7 @@ En cuando al proceso podemos modificar el `DATASET_INPUT`, el `DATASET_OUTPUT`, 
 
 #### CUDA
 
-Para entrenar, es muy recomendable tener configurado **CUDA** en el dispositivo. Aquí no entraremos en como configurarlo, pero si cabe recalcar la importancia de tenerlo (se ahorra mucho tiempo). En el código del entrenamiendo nos aseguramos de que **CUDA** este funcionando correctamente y además guardaremos el dispositivo del que disponemos en la variable `device`.
+Para entrenar, es muy recomendable tener configurado **CUDA** en el dispositivo. Aquí no entraremos en como configurarlo, pero si cabe recalcar la importancia de tenerlo (se ahorra mucho tiempo). En el código del entrenamiento nos aseguramos de que **CUDA** este funcionando correctamente y además guardaremos el dispositivo del que disponemos en la variable `device`.
 
 #### Transformaciones ([link](modules/img_transforms.py))
 
@@ -164,15 +161,15 @@ Para mejorar la precision en el análisis aplicaremos una serie de transformacio
 
 * **escala de grises**: Así el modelo solo tendrá un canal, esto da grandes beneficios así como simplificar el modelo.
 * **resize**:  Ajusta el tamaño de la imagen a la que usa el modelo, en este caso `220 pixeles`.
-* **equalizado**: Ecualiza la imagen, esto puede mejorar la precisión, al tener una distribución del histograma uniforme.
+* **ecualizado**: Ecualiza la imagen, esto puede mejorar la precisión, al tener una distribución del histograma uniforme.
 * **normalizado**:  Normaliza los valores de la imagen para ajustarse a la media y la desviación típica del conjunto total del dataset.
 
 ##### Data augmentation
 
 Para aumentar virtualmente el tamaño del dataset de entrenamiento.
 
-* **rotacion aleatoria**: Rotaciones aleatorias de un máximo de **20º**.
-* **rotacion aleatoria vertical**: Con una probabilidad del **80%** para ambos casos.
+* **rotación aleatoria**: Rotaciones aleatorias de un máximo de **20º**.
+* **rotación aleatoria vertical**: Con una probabilidad del **80%** para ambos casos.
 * **Color jitter**: Modifica valores de brillo y contraste, un **1%** para ambos en este caso.
 
 #### Dataset y DatasetLoader
@@ -211,7 +208,7 @@ Para ello se necesita una forma de calcular la distancia, usaremos la función p
 
 ##### Optimizer
 
-Sirve para el entrenamiento, se encargará de guardar el estado actual del modelo y actualizrá los parámetros basándose en los gradientes computados. En este caso usaremos `SDG` que es uno de los mas conocidos, configurandolo con los siguientes parámetros:
+Sirve para el entrenamiento, se encargará de guardar el estado actual del modelo y actualizará los parámetros basándose en los gradientes computados. En este caso usaremos `SDG` que es uno de los mas conocidos, configurándolo con los siguientes parámetros:
 
 * **learning_rate**: Este valor es realmente muy importante, tiene un impacto más que reseñable en el entrenamiento. No es fijo, en este caso, y tras varias pruebas, nos hemos quedado con un valor de `0.001`.
 * **momentum**: Afecta a la inercia del optimizador, generalmente nos da unas gráficas loss/epoch mas suaves, lo que puede ayudar con el entrenamiento, nos hemos quedado con un `0.95`.
@@ -221,15 +218,15 @@ Sirve para el entrenamiento, se encargará de guardar el estado actual del model
 
 Se encarga de gestionar la variación del loss durante el entrenamiento, en este caso usaremos `ReduceLROnPlateau`; cuando no se consigue mejora, se reduce el `learning_rate` en una `factor` de **0.1** en este caso, con una paciencia de **10**.
 
-##### Intentos de entrenamiento
+#### Intentos de entrenamiento
 
 Se han intentado varios ajustes de hiperparámetros, y varias configuraciones del model, del dataset, llegando solo a resultados con un **loss** de **.4**, al aumentar las capas fully connected y otros ajustes de hiperparámetros se llegó a la conclusión de que el problema tiene mucha dimensionalidad, es decir se trata de un problema de mucha complejidad para lo que tenemos actualmente.
 
 Para poder abordar el problema de la forma mas adecuada se necesita un dataset mas completo, y posiblemente una red más compleja, lo que nos dejaría con tiempos de entrenamiento más altos.
 
-##### Primer entrenamiento
+#### Primer entrenamiento
 
-Terminamos el entrenamiento en la época **40** con un `val_loss` de `0.334` dandonos unos resultados esperanzadores comparados con los anteriores.
+Terminamos el entrenamiento en la época **40** con un `val_loss` de `0.334` dándonos unos resultados esperanzadores comparados con los anteriores.
 
 ![first train](doc/train1.png)
 
@@ -242,7 +239,7 @@ Negat dst:	| mean 3.4036544831469655	| median 3.031758427619934	| std 2.16681094
 Diff(max(posit_dst), min(negat_dst)) -3.1587235629558563
 ```
 
-##### Segundo entrenamiento a partir del mejor modelo del primer entrenamiento
+#### Segundo entrenamiento a partir del mejor modelo del primer entrenamiento
 
 Hacemos un entrenamiento a partir del mejor modelo actual para ver si podemos mejorar los resultados. Y obtenemos que en la época 51 (contando con que empezamos en la 40) conseguimos un `val_loss` de `0.26` siendo el mejor resultado obtenido en todos los entrenamientos y pruebas.
 
@@ -250,12 +247,24 @@ Hacemos un entrenamiento a partir del mejor modelo actual para ver si podemos me
 
 Resultados del conjunto de tests
 
-´´´txt
+```txt
 Loss 0.36033838987350464
 Posit dst:	| mean 1.4632612499408424	| median 1.1054602265357971	| std 0.8907289976563053	| min, max 0.2247583419084549, 3.42179274559021	| diff(min,max) 3.197034403681755
 Negat dst:	| mean 3.663035959005356	| median 3.885785937309265	| std 2.255472419401447	| min, max 0.4521939754486084, 9.316268920898438	| diff(min,max) 8.864074945449829
 Diff(max(posit_dst), min(negat_dst)) -2.9695987701416016
-´´´
+```
 
 ### Producto final
+
+El producto final se trata de una aplicación por consola que tiene 2 posibles acciones:
+
+* **calc image_path**: Calcula los embeddings de la imagen que se le pasa.
+* **comp image_path embeddings**: Compara una imagen con un embedding y discierne si se trata de la misma persona o no.
+
+> Cabe resaltar que tuvimos que crear otro ejecutable que llame al que realmente hace las cosas (_main.py) debido a que la salida por consola se veía inundada por mensajes de **mediapipe** (buscando, resulta que en la versión actual no tiene forma de evitarse). Por lo que usamos otro proceso para que llame al principal, recoja su salida y la filtre.
+
+> El THRESHOLD se extrae de analizar los datos, a mas bajo mas seguro pero más falsos negativos, y viceversa. Como hemos explicado, realmente ahora mismo no es muy fiable.
+
 ## Conclusiones
+
+Se trata de un problema que necesita de más potencia y datos. Aun así se ha hecho un uso extenso de muchas técnicas diferentes tanto de imagen como a la hora de entrenar el modelo, que han hecho que se mejoren mucho los resultados.
