@@ -1,4 +1,6 @@
 # Proyecto de Visión por computador
+> **Asignatura**: *Visión por Computador*  
+> **Alumno**: *Nelson Cabrera Cano*
 
 ## Tabla de contenidos
 
@@ -36,6 +38,8 @@
       - [Segundo entrenamiento a partir del mejor modelo del primer entrenamiento](#segundo-entrenamiento-a-partir-del-mejor-modelo-del-primer-entrenamiento)
     - [Producto final](#producto-final)
   - [Conclusiones](#conclusiones)
+  - [Fuentes](#fuentes)
+  - [](#)
 
 
 ## Concepto
@@ -61,7 +65,7 @@ Dividiremos las partes del proyecto en:
 * **modules**: Aquellos bloques de código, funciones, clases, que tienen una utilidad en si mismo, y mediante su combinación tendremos el sistema objetivo, asi podemos de forma bien estructurada usar los mismos sistemas en el entrenamiento y en el producto final.
 * **procedures**: Procedimientos, pasos a seguir, tareas, pasos necesarios a hacer para llegar a un fin. Aquí se encuentra todo lo referente a la preparación de la CNN.
 * **data**: esta carpeta contiene los datasets, no existe en github.
-* **.**: Fuera de ningún directorio tenemos:
+* **./** : Fuera de ningún directorio tenemos:
     * **blaze_face_short_range.tflite**: El modelo que usaremos como extractor de caras.
     * **model.pth**: El modelo que usaremos como extractor del vector de identificación.
     * **requirements.txt**: Este fichero indica las librerías utilizadas, y puede usarse para instalarlas todas en el entorno de forma sencilla.
@@ -114,9 +118,9 @@ Una vez elegido el modelo, creamos el módulo **modules/face_extractor.py** que 
 
 Usando el modelo, extraemos todas las caras, guardamos las imágenes, y creando un dataframe con la ruta y el `setid`. Para guardarlo posteriormente como un **CSV** y poder usarlo después.
 
-> En función de si usamos cv2 para abrir las imágenes o el sistema que viene con **mediapipe** obtenemos resultados muy dispares.
-> * **mediapipe**: Algunas imágenes se cargan giradas 90º y otras no, además extrae muchas menos caras. (Especialmente fallando en uno de los sujetos)
-> * **cv2**: El proceso es más lento.
+> En función de si usamos cv2 para abrir las imágenes o el sistema que viene con **mediapipe** obtenemos resultados muy dispares.  
+> * **mediapipe**: Algunas imágenes se cargan giradas 90º y otras no, además extrae muchas menos caras. (Especialmente fallando en uno de los sujetos).  
+> * **cv2**: El proceso es más lento.  
 
 
 ### Procesamiento del dataset de las caras extraídas ([link](procedures/data_processing.ipynb))
@@ -267,4 +271,8 @@ El producto final se trata de una aplicación por consola que tiene 2 posibles a
 
 ## Conclusiones
 
-Se trata de un problema que necesita de más potencia y datos. Aun así se ha hecho un uso extenso de muchas técnicas diferentes tanto de imagen como a la hora de entrenar el modelo, que han hecho que se mejoren mucho los resultados.
+Se trata de un problema que necesita de más potencia de cómputo y sobretodo más datos. Aun así se ha hecho un uso extenso de muchas técnicas diferentes tanto de imagen como a la hora de entrenar el modelo, que han hecho que se mejoren mucho los resultados. Si hubiese sido posible, claramente lo que más necesitaba era claramente un dataset más extenso, seguramente eso hubiese incrementado notablemente la calidad de los resultados.
+
+## Fuentes
+
+Como fuentes tenemos la documentación de **pytorch**, de **matplotlib** y **pandas**.
