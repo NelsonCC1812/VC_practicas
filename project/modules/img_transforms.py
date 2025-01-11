@@ -52,7 +52,7 @@ normalize = lambda image_size, mean=0, std=1: transforms.Compose([
 data_augmentation = lambda: transforms.Compose([
     transforms.ToPILImage(),
     transforms.RandomRotation(20),
-    transforms.RandomHorizontalFlip(p=.8),
+#    transforms.RandomHorizontalFlip(p=.8),
     transforms.RandomVerticalFlip(p=.8),
     transforms.ColorJitter(brightness=.1, contrast=.1),
     transforms.ToTensor()

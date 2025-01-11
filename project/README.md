@@ -23,6 +23,20 @@ por defecto, `torch.nn.TripletMarginLoss` utiliza `nn.PairwiseDistance` que es l
       - [Normalización con media y desviación típica](#normalización-con-media-y-desviación-típica)
       - [Configuración](#configuración-1)
     - [Entrenamiento (link)](#entrenamiento-link)
+      - [CUDA](#cuda)
+      - [Transformaciones (link)](#transformaciones-link)
+        - [Normalize](#normalize)
+        - [Data augmentation](#data-augmentation)
+      - [Dataset y DatasetLoader](#dataset-y-datasetloader)
+      - [Early stopper](#early-stopper)
+      - [Modelo (modelo)](#modelo-modelo)
+      - [Herramientas de entrenamiento](#herramientas-de-entrenamiento)
+        - [Criterion](#criterion)
+        - [Optimizer](#optimizer)
+        - [Scheduler](#scheduler)
+        - [Intentos de entrenamiento](#intentos-de-entrenamiento)
+        - [Primer entrenamiento](#primer-entrenamiento)
+        - [Segundo entrenamiento a partir del mejor modelo del primer entrenamiento](#segundo-entrenamiento-a-partir-del-mejor-modelo-del-primer-entrenamiento)
     - [Producto final](#producto-final)
   - [Conclusiones](#conclusiones)
 
@@ -136,8 +150,112 @@ En cuando al proceso podemos modificar el `DATASET_INPUT`, el `DATASET_OUTPUT`, 
 
 ### Entrenamiento ([link](procedures/model_training.ipynb))
 
+#### CUDA
 
+Para entrenar, es muy recomendable tener configurado **CUDA** en el dispositivo. Aquí no entraremos en como configurarlo, pero si cabe recalcar la importancia de tenerlo (se ahorra mucho tiempo). En el código del entrenamiendo nos aseguramos de que **CUDA** este funcionando correctamente y además guardaremos el dispositivo del que disponemos en la variable `device`.
 
+#### Transformaciones ([link](modules/img_transforms.py))
+
+Todas se aplican a `PILImages`, por lo que tenemos que convertir lo que tengamos ello, y vamos a trabajar con tensores, por lo que tenemos que usar la transformación `ToTensor` para este fin.
+
+##### Normalize
+
+Para mejorar la precision en el análisis aplicaremos una serie de transformaciones, tanto al dataset como a cualquiera de las imágenes que le pasemos al model. En este caso aplicaremos las siguientes transformaciones:
+
+* **escala de grises**: Así el modelo solo tendrá un canal, esto da grandes beneficios así como simplificar el modelo.
+* **resize**:  Ajusta el tamaño de la imagen a la que usa el modelo, en este caso `220 pixeles`.
+* **equalizado**: Ecualiza la imagen, esto puede mejorar la precisión, al tener una distribución del histograma uniforme.
+* **normalizado**:  Normaliza los valores de la imagen para ajustarse a la media y la desviación típica del conjunto total del dataset.
+
+##### Data augmentation
+
+Para aumentar virtualmente el tamaño del dataset de entrenamiento.
+
+* **rotacion aleatoria**: Rotaciones aleatorias de un máximo de **20º**.
+* **rotacion aleatoria vertical**: Con una probabilidad del **80%** para ambos casos.
+* **Color jitter**: Modifica valores de brillo y contraste, un **1%** para ambos en este caso.
+
+#### Dataset y DatasetLoader
+
+Creamos los datasets de pytorch para cada uno de los conjuntos (entrenamiento, validación y tests), aplicando la normalización a todos los conjuntos y el data augmentation solo al conjunto de entrenamiento.
+
+En cuanto al Dataloader, simplemente creamos por cada `Dataset` un `DataLoader`. Es importante indicar el `batch_size`, en el caso del conjunto de entrenamiento necesitamos que este activo el barajado y no en los demás conjuntos (por temas de eficiencia) y es recomendable que este activado `drop_last`.
+
+El `batch_size` junto al `learning_rate` uno de los hiperparámetros que mas influencian el entrenamiento, por lo que los configuraremos mediante constantes de configuración.
+
+#### Early stopper
+
+Creamos una clase que se encargará de la parada temprana, más conocida como **early stopping**. En nuestro caso, usará el valor del **loss** del conjunto de **validación** para discernir entre si un modelo es mejor o peor que otro. Mantendrá los pesos del mejor de los modelos que se haya conseguido, y la época (por razones de análisis y para reentrenar).
+
+Le hemos puesto una opción de que avise de si el model actual es el mejor o que muestre el mejor hasta el momento, con sus parámetros. Y como añadido, que ejecute un callback cuando se quiera hacer la parada temprana, en este caso solo se avisará de que se ha ejecutado.
+
+Por último, se puede resetear el contador para poder ejecutar un entrenamiento desde el mejor modelo que se tenía.
+
+#### Modelo ([modelo](modules/Model.py))
+
+Creamos un modelo, en este caso usaremos una** red convolucional** típica con 5 **capas convolucionales**, con **batch normalization** y **maxpool** en cada una de las capas, un **padding** de 3, **kernel** de 7. Seguido de 3 capas **fully connected** con una salida de **128** que será nuestro vector de características. Usaremos **relu** como función de activación. Por último, usaremos un **dropout** de `50%` en las capas 1 y 2 de la **fully connected**.
+
+Creamos el modelo y en el caso de tener varios dispositivos **CUDA** usamos el `DataParallel`.
+
+#### Herramientas de entrenamiento
+
+Ya hemos visto algunas como el `Early Stopper` que hicimos a mano, pero estas herramientas ya están creadas y solo necesitamos configurarlas.
+
+##### Criterion
+
+Se utiliza a la hora de calcular el loss y de generar el backwards, o sea, el aprendizaje del modelo. Como hemos indicado antes usaremos el concepto de **Triplets Loss**, donde se usan 3 elementos: ancla, positivo y negativo.
+
+El ancla es una imagen cualquiera, el positivo es un elemento del mismo tipo que el ancla (pero no el mismo elemento) y el negativo es un elemento de un tipo diferente al ancla. Lo que buscamos es que se minimice la **distancia** entre ancla y negativo, al mismo tiempo que se maximice la **distancia** entre ancla y negativo.
+
+Para ello se necesita una forma de calcular la distancia, usaremos la función por defecto de pytorch para este criterion, `PairwiseDistance`.
+
+##### Optimizer
+
+Sirve para el entrenamiento, se encargará de guardar el estado actual del modelo y actualizrá los parámetros basándose en los gradientes computados. En este caso usaremos `SDG` que es uno de los mas conocidos, configurandolo con los siguientes parámetros:
+
+* **learning_rate**: Este valor es realmente muy importante, tiene un impacto más que reseñable en el entrenamiento. No es fijo, en este caso, y tras varias pruebas, nos hemos quedado con un valor de `0.001`.
+* **momentum**: Afecta a la inercia del optimizador, generalmente nos da unas gráficas loss/epoch mas suaves, lo que puede ayudar con el entrenamiento, nos hemos quedado con un `0.95`.
+* **weight decay**: Es una técnica de normalización que añade una pequeña penalización, en este caso L2 normalización a todos los pesos a la función de cálculo de loss.
+
+##### Scheduler
+
+Se encarga de gestionar la variación del loss durante el entrenamiento, en este caso usaremos `ReduceLROnPlateau`; cuando no se consigue mejora, se reduce el `learning_rate` en una `factor` de **0.1** en este caso, con una paciencia de **10**.
+
+##### Intentos de entrenamiento
+
+Se han intentado varios ajustes de hiperparámetros, y varias configuraciones del model, del dataset, llegando solo a resultados con un **loss** de **.4**, al aumentar las capas fully connected y otros ajustes de hiperparámetros se llegó a la conclusión de que el problema tiene mucha dimensionalidad, es decir se trata de un problema de mucha complejidad para lo que tenemos actualmente.
+
+Para poder abordar el problema de la forma mas adecuada se necesita un dataset mas completo, y posiblemente una red más compleja, lo que nos dejaría con tiempos de entrenamiento más altos.
+
+##### Primer entrenamiento
+
+Terminamos el entrenamiento en la época **40** con un `val_loss` de `0.334` dandonos unos resultados esperanzadores comparados con los anteriores.
+
+![first train](doc/train1.png)
+
+Resultados del conjunto de tests
+
+```txt
+Loss 0.4830780029296875
+Posit dst:	| mean 1.473170286975801	| median 1.2176315784454346	| std 0.9215030930127397	| min, max 0.19301071763038635, 3.6138923168182373	| diff(min,max) 3.420881599187851
+Negat dst:	| mean 3.4036544831469655	| median 3.031758427619934	| std 2.1668109497348556	| min, max 0.455168753862381, 8.081620216369629	| diff(min,max) 7.626451462507248
+Diff(max(posit_dst), min(negat_dst)) -3.1587235629558563
+```
+
+##### Segundo entrenamiento a partir del mejor modelo del primer entrenamiento
+
+Hacemos un entrenamiento a partir del mejor modelo actual para ver si podemos mejorar los resultados. Y obtenemos que en la época 51 (contando con que empezamos en la 40) conseguimos un `val_loss` de `0.26` siendo el mejor resultado obtenido en todos los entrenamientos y pruebas.
+
+![second train](doc/train2.png)
+
+Resultados del conjunto de tests
+
+´´´txt
+Loss 0.36033838987350464
+Posit dst:	| mean 1.4632612499408424	| median 1.1054602265357971	| std 0.8907289976563053	| min, max 0.2247583419084549, 3.42179274559021	| diff(min,max) 3.197034403681755
+Negat dst:	| mean 3.663035959005356	| median 3.885785937309265	| std 2.255472419401447	| min, max 0.4521939754486084, 9.316268920898438	| diff(min,max) 8.864074945449829
+Diff(max(posit_dst), min(negat_dst)) -2.9695987701416016
+´´´
 
 ### Producto final
 ## Conclusiones
