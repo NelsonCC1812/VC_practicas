@@ -5,9 +5,9 @@ from mediapipe.tasks.python import vision
 
 class FaceExtractor:
     MODEL_PATH = '../blaze_face_short_range.tflite'
-    def __init__(self,*, mode):
+    def __init__(self,*, mode=None, path=None):
          self.detector = vision.FaceDetector.create_from_options(
-    vision.FaceDetectorOptions(base_options=python.BaseOptions(model_asset_path=self.MODEL_PATH)))
+              vision.FaceDetectorOptions(base_options=python.BaseOptions(model_asset_path=path or self.MODEL_PATH)))
          self.mode = mode
            
 
