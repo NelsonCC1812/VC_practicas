@@ -264,6 +264,8 @@ El producto final se trata de una aplicación por consola que tiene 2 posibles a
 * **calc image_path**: Calcula los embeddings de la imagen que se le pasa.
 * **comp image_path embeddings**: Compara una imagen con un embedding y discierne si se trata de la misma persona o no.
 
+Los embeddings están en forma de una sucesión de 128 floats separados por comas, y codificados en **base 64**, estos valores se codifican a un **tensor**. Por lo que existe un proceso de codificación y decodificación (Se ha legido guardarlos en base 64 por los beneficios que esto trae).
+
 > Cabe resaltar que tuvimos que crear otro ejecutable que llame al que realmente hace las cosas (_main.py) debido a que la salida por consola se veía inundada por mensajes de **mediapipe** (buscando, resulta que en la versión actual no tiene forma de evitarse). Por lo que usamos otro proceso para que llame al principal, recoja su salida y la filtre.
 
 > El THRESHOLD se extrae de analizar los datos, a mas bajo mas seguro pero más falsos negativos, y viceversa. Como hemos explicado, realmente ahora mismo no es muy fiable.

@@ -67,6 +67,7 @@ if __name__ == '__main__':
         exit()
 
     else:
-        print('calc image_path\tto calc embeddings')
-        print('comp image_path embeding\tto calc if an embedding is from a person')
+        print('help')
+        print('\tcalc image_path\t\t\tto calc embeddings')
+        print('\tcomp image_path embeding\tto calc if an embedding is from a person')
         exit()
