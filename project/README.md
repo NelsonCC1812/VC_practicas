@@ -274,7 +274,7 @@ Los embeddings están en forma de una sucesión de 128 floats separados por coma
 
 Se trata de un problema que necesita de más potencia de cómputo y sobretodo más datos. Aun así se ha hecho un uso extenso de muchas técnicas diferentes tanto de imagen como a la hora de entrenar el modelo, que han hecho que se mejoren mucho los resultados. Si hubiese sido posible, claramente lo que más necesitaba era claramente un dataset más extenso, seguramente eso hubiese incrementado notablemente la calidad de los resultados.
 
-La tecnología es extensible a sistemas de reconocimiento de diferentes tipos, como aplicados a cámaras y sistemas de seguridad.
+La tecnología es extensible a sistemas de reconocimiento de diferentes tipos, como aplicados a cámaras y sistemas de seguridad, o verificación de identidad en diferentes entornos como el hogar o el incluso en empresas.
 
 ## Fuentes
 
