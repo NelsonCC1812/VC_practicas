@@ -19,7 +19,7 @@ MODEL_PATH = './model.pth'
 # model
 device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
 model = Model().to(device)
-model.load_state_dict(torch.load(MODEL_PATH, weights_only=True))
+model.load_state_dict(torch.load(MODEL_PATH, weights_only=True, map_location=device))
 model.eval()
 
 # face_extractor
